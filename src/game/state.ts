@@ -30,4 +30,9 @@ export const LEVEL_NAMES: Record<number, string> = {
   5: 'Intelligence',
 };
 
-
+export const LEVEL_REQUIREMENTS: Record<number, { xp: number; stability: number }> = {
+  2: { xp: 10, stability: 30 },
+  3: { xp: 25, stability: 50 },
+  4: { xp: 40, stability: 65 },
+  5: { xp: 60, stability: 80 },
+};
