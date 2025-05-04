@@ -1,11 +1,48 @@
 import { useState } from 'react';
 import './index.css';
-import { GameState, initialGameState, LEVEL_NAMES, LEVEL_REQUIREMENTS } from './game/state';
+import { GameState, initialGameState, LEVEL_REQUIREMENTS } from './game/state';
 import { gameEvents } from './game/events';
+import { GameScreen } from './components/GameScreen';
+import { mutationPool, Mutation } from './game/mutations';
 
 function App() {
   const [state, setState] = useState<GameState>(initialGameState);
   const [lastEvent, setLastEvent] = useState<string | null>(null);
+  const [pendingMutation, setPendingMutation] = useState<Mutation | null>(null);
+
+  const stimulateMutation = () => {
+    if (state.mutations.length >= 5) {
+      setLastEvent('Mutation limit reached. No further mutations possible.');
+      return;
+    }
+  
+    const remaining = mutationPool.filter(
+      (m) => !state.mutations.includes(m.name)
+    );
+    const random = remaining[Math.floor(Math.random() * remaining.length)];
+  
+    setPendingMutation(random);
+  };
+
+  const acceptMutation = () => {
+    if (!pendingMutation) return;
+  
+    setState((prev) => {
+      const updated = pendingMutation.apply(prev);
+      return {
+        ...updated,
+        mutations: [...prev.mutations, pendingMutation.name],
+      };
+    });
+  
+    setLastEvent(`Mutation acquired: ${pendingMutation.name}`);
+    setPendingMutation(null);
+  };
+  
+  const rejectMutation = () => {
+    setLastEvent('Mutation rejected.');
+    setPendingMutation(null);
+  };
 
   const nextDay = () => {
     setState(prev => ({
@@ -60,46 +97,31 @@ function App() {
     setLastEvent(event?.description || null);
   };
   
-  const formattedEvent = lastEvent ? `\nRecent Event:\n> ${lastEvent}\n` : '';
   return (
-    <pre style={{ fontFamily: 'monospace', padding: '1rem', whiteSpace: 'pre-wrap' }}>
-  {`
-  ╭─ Welcome to Soupvivors ─────────────────────────────╮
-  │  You are a bacterial lifeform inside a bowl of      │
-  │  soup. Survive, evolve, and become intelligent      │
-  │  before the host discards you.                      │
-  ╰─────────────────────────────────────────────────────╯
-  
-  ┌───────────────────────────────┐
-  │       SOUPVIVORS REPORT       │
-  │   Specimen: ${state.soup.padEnd(18)}│
-  │   Day: ${state.day.toString().padEnd(23)}│
-  └───────────────────────────────┘
-  
-  Civilization Level: ${LEVEL_NAMES[state.level]}
-  Stability: ${state.stability}%
-  Evolution XP: ${state.xp}
-  
-  Resources:
-  - Proteins: ${state.proteins}
-  - Carbs:    ${state.carbs}
-  - Spices:   ${state.spices}
-  - Oxygen:   ${state.oxygen}
-  `}
-  {formattedEvent}
-  {`
-  ╭─ Available Actions ─────────────╮
-  │ [1] Expand Biomass              │
-  ╰─────────────────────────────────╯
-  `}
-      <button onClick={expandBiomass}>[1] Expand Biomass</button>
-      <button onClick={nextDay}>Next Day</button>
-  {`
-  ──────────────────────────────────────────────────────
-  Microbial Observation Interface v0.1-beta
-  Institute of Soupvivalism ©
-  `}
-    </pre>
+    <>
+      <GameScreen
+        state={state}
+        lastEvent={lastEvent}
+        onExpandBiomass={expandBiomass}
+        onStimulateMutation={stimulateMutation}
+        onNextDay={nextDay}
+      />
+      {pendingMutation && (
+        <div className="mutation-popup" style={{
+          fontFamily: 'monospace',
+          background: '#111',
+          color: '#aaffaa',
+          border: '1px solid #444',
+          padding: '1rem',
+          margin: '1rem',
+        }}>
+          <strong>Mutation Detected:</strong> {pendingMutation.name}
+          <p>{pendingMutation.description}</p>
+          <button onClick={acceptMutation}>[Accept]</button>
+          <button onClick={rejectMutation}>[Reject]</button>
+        </div>
+      )}
+    </>
   );
 }
 

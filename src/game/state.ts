@@ -8,6 +8,7 @@ export type GameState = {
   spices: number;
   oxygen: number;
   xp: number; 
+  mutations: string[];
 };
 
 export const initialGameState: GameState = {
@@ -20,6 +21,7 @@ export const initialGameState: GameState = {
   spices: 20,
   oxygen: 80,
   xp: 0, 
+  mutations: [],
 };
 
 export const LEVEL_NAMES: Record<number, string> = {
