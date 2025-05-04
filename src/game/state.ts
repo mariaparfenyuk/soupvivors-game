@@ -1,12 +1,13 @@
 export type GameState = {
   day: number;
-  stability: number;
-  level: number;
+  stability: number; // 0–100
+  level: number; // 1–5
   soup: string;
   proteins: number;
   carbs: number;
   spices: number;
   oxygen: number;
+  xp: number; 
 };
 
 export const initialGameState: GameState = {
@@ -18,6 +19,7 @@ export const initialGameState: GameState = {
   carbs: 40,
   spices: 20,
   oxygen: 80,
+  xp: 0, 
 };
 
 export const LEVEL_NAMES: Record<number, string> = {
@@ -27,3 +29,5 @@ export const LEVEL_NAMES: Record<number, string> = {
   4: 'Culture',
   5: 'Intelligence',
 };
+
+
