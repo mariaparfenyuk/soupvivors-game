@@ -9,6 +9,11 @@ export type GameState = {
   oxygen: number;
   xp: number; 
   mutations: string[];
+  isGameOver: boolean;
+  maxDays: number;
+  xpBoost?: boolean;
+  spiceSynergy?: boolean;
+  oxygenBonus?: boolean;
 };
 
 export const initialGameState: GameState = {
@@ -22,6 +27,8 @@ export const initialGameState: GameState = {
   oxygen: 80,
   xp: 0, 
   mutations: [],
+  isGameOver: false,
+  maxDays: Math.floor(20 + Math.random() * 10),
 };
 
 export const LEVEL_NAMES: Record<number, string> = {

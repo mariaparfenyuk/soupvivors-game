@@ -30,4 +30,20 @@ export const mutationPool: Mutation[] = [
     description: 'Increase XP gain by 1 per action.',
     apply: (state) => ({ ...state, xpBoost: true }),
   },
+  {
+    name: 'Rapid Division',
+    description: 'Increase XP gain by 1 per action.',
+    apply: (state) => ({ ...state, xpBoost: true }),
+  },
+  {
+    name: 'Spice Receptors',
+    description: 'Spices increase stability.',
+    apply: (state) => ({ ...state, spiceSynergy: true }),
+  },
+  {
+    name: 'Photosensitive Skin',
+    description: '+5 Oxygen per day.',
+    apply: (state) => ({ ...state, oxygenBonus: true }),
+  }
+  
 ];
