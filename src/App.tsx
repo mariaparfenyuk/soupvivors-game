@@ -1,10 +1,23 @@
 import './index.css';
+import { useState } from 'react';
 import { GameScreen } from './components/GameScreen';
 import { MutationDialog } from './components/MutationDialog';
 import { EndScreen } from './components/EndScreen';
+import { SoupSelect } from './components/SoupSelect';
+import { soups, SoupType } from './game/soups';
 import { useGameState } from './hooks/useGameState';
 
 function App() {
+  const [selectedSoup, setSelectedSoup] = useState<SoupType | null>(null);
+
+  const game = useGameState(selectedSoup);
+
+  if (!selectedSoup) {
+    return <SoupSelect soups={soups} onSelect={setSelectedSoup} />;
+  }
+
+  if (!game) return null;
+
   const {
     state,
     lastEvent,
@@ -14,7 +27,7 @@ function App() {
     acceptMutation,
     rejectMutation,
     nextDay,
-  } = useGameState();
+  } = game;
 
   if (state.isGameOver) {
     return (

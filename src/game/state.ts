@@ -1,20 +1,21 @@
 export type GameState = {
+  level: number;
   day: number;
-  stability: number; // 0–100
-  level: number; // 1–5
+  xp: number;
   soup: string;
+  stability: number;
   proteins: number;
   carbs: number;
   spices: number;
   oxygen: number;
-  xp: number; 
   mutations: string[];
-  isGameOver: boolean;
   maxDays: number;
+  isGameOver: boolean;
   xpBoost?: boolean;
   spiceSynergy?: boolean;
   oxygenBonus?: boolean;
 };
+
 
 export const initialGameState: GameState = {
   day: 1,
