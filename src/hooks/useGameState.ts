@@ -1,8 +1,18 @@
 import { useEffect, useState } from 'react';
-import { GameState, LEVEL_REQUIREMENTS } from '../game/state';
+import { GameState } from '../game/state';
 import { Mutation, mutationPool } from '../game/mutations';
-import { gameEvents } from '../game/events';
+import { gameEvents, temperatureEvents } from '../game/events';
 import { SoupType } from '../game/soups';
+import {
+  updateCivilizationLevel,
+  applyStabilityChange,
+  applyEvent,
+  isGameOver,
+  applyMutation,
+} from '../game/logic';
+import { randomItem } from '../game/utils';
+import { LEVEL_REQUIREMENTS } from '../game/state';
+
 
 export const useGameState = (soup: SoupType) => {
   const [state, setState] = useState<GameState | null>(null);
@@ -44,49 +54,24 @@ export const useGameState = (soup: SoupType) => {
       ? gameEvents[Math.floor(Math.random() * gameEvents.length)]
       : null;
 
-    setState(prev => {
-      if (!prev) return prev;
-
-      const baseXp = 5;
-      const bonusXp = prev.xpBoost ? 1 : 0;
-      const newXp = prev.xp + baseXp + bonusXp;
-
-      const newProteins = Math.max(prev.proteins - 5, 0);
-      const newCarbs = Math.max(prev.carbs - 5, 0);
-
-      let stabilityChange = 0;
-      if (newProteins < 20 || newCarbs < 20) {
-        stabilityChange = -5;
-      } else if (newProteins > 50 && newCarbs > 50) {
-        stabilityChange = +5;
-      }
-
-      if (prev.spiceSynergy && prev.spices > 0) {
-        stabilityChange += 3;
-      }
-
-      const updated: GameState = {
-        ...prev,
-        xp: newXp,
-        proteins: newProteins,
-        carbs: newCarbs,
-        stability: Math.max(Math.min(prev.stability + stabilityChange, 100), 0),
-        day: prev.day + 1,
-        oxygen: prev.oxygenBonus ? prev.oxygen + 5 : prev.oxygen,
-      };
-
-      const result = updateCivilizationLevel(event?.effect ? event.effect(updated) : updated);
-
-      if (result.level === 5 || result.day > result.maxDays) {
-        return { ...result, isGameOver: true };
-      }
-
-      return result;
-    });
-
-    if (event) {
-      setLastEvent(event.description);
-    }
+      setState(prev => {
+        if (!prev) return prev;
+      
+        let updated = {
+          ...prev,
+          xp: prev.xp + 5 + (prev.xpBoost ? 1 : 0),
+          proteins: Math.max(prev.proteins - 5, 0),
+          carbs: Math.max(prev.carbs - 5, 0),
+          day: prev.day + 1,
+          oxygen: prev.oxygenBonus ? prev.oxygen + 5 : prev.oxygen,
+        };
+      
+        updated = applyStabilityChange(updated);
+        updated = applyEvent(updated, event);
+        updated = updateCivilizationLevel(updated);
+      
+        return isGameOver(updated) ? { ...updated, isGameOver: true } : updated;
+      });
   };
 
   const stimulateMutation = () => {
@@ -125,54 +110,27 @@ export const useGameState = (soup: SoupType) => {
 
     setState(prev => {
       if (!prev) return prev;
-
+    
       let updated = { ...prev, day: prev.day + 1 };
-
+    
       if (prev.oxygenBonus) {
         updated.oxygen += 5;
       }
-
-      const shouldMutate = Math.random() < 0.12;
-      if (shouldMutate) {
-        const available = mutationPool.filter(m => !prev.mutations.includes(m.name));
-        if (available.length > 0) {
-          const mutation = available[Math.floor(Math.random() * available.length)];
-          updated = mutation.apply(updated);
-          updated.mutations = [...updated.mutations, mutation.name];
-          setLastEvent('Spontaneous mutation: ' + mutation.name);
-        }
+    
+      const availableMutations = mutationPool.filter(m => !prev.mutations.includes(m.name));
+      if (Math.random() < 0.12 && availableMutations.length) {
+        const mutation = randomItem(availableMutations);
+        updated = applyMutation(updated, mutation);
+        setLastEvent(`Spontaneous mutation: ${mutation.name}`);
       }
-
-      const shouldTempEvent = Math.random() < 0.1;
-      if (shouldTempEvent) {
-        const tempEvents = [
-          {
-            description: 'Freezer spike reduced available oxygen.',
-            effect: (s: GameState) => ({ ...s, oxygen: Math.max(s.oxygen - 10, 0) }),
-          },
-          {
-            description: 'Fermentation boost enriched proteins.',
-            effect: (s: GameState) => ({ ...s, proteins: s.proteins + 5 }),
-          },
-          {
-            description: 'Cold shock destabilized membranes.',
-            effect: (s: GameState) => ({ ...s, stability: Math.max(s.stability - 5, 0) }),
-          },
-          {
-            description: 'Mild warming increased carbohydrate flow.',
-            effect: (s: GameState) => ({ ...s, carbs: s.carbs + 5 }),
-          },
-        ];
-        const event = tempEvents[Math.floor(Math.random() * tempEvents.length)];
-        updated = event.effect(updated);
+    
+      if (Math.random() < 0.1) {
+        const event = randomItem(temperatureEvents);
+        updated = applyEvent(updated, event);
         setLastEvent(event.description);
       }
-
-      if (updated.level === 5 || updated.day > updated.maxDays) {
-        return { ...updated, isGameOver: true };
-      }
-
-      return updated;
+    
+      return isGameOver(updated) ? { ...updated, isGameOver: true } : updated;
     });
   };
 
