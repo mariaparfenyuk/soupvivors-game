@@ -19,6 +19,10 @@ export const useGameState = (soup: SoupType) => {
   const [lastEvent, setLastEvent] = useState<string | null>(null);
   const [pendingMutation, setPendingMutation] = useState<Mutation | null>(null);
 
+  const logEvent = (text: string | null) => {
+    if (text) setLastEvent(text);
+  };
+
   useEffect(() => {
     if (soup) {
       setState({
@@ -86,7 +90,7 @@ export const useGameState = (soup: SoupType) => {
 
   const acceptMutation = () => {
     if (!pendingMutation || !state) return;
-
+  
     setState(prev => {
       if (!prev) return prev;
       const updated = pendingMutation.apply(prev);
@@ -95,13 +99,13 @@ export const useGameState = (soup: SoupType) => {
         mutations: [...prev.mutations, pendingMutation.name],
       };
     });
-
-    setLastEvent(`Mutation acquired: ${pendingMutation.name}`);
+  
+    logEvent(`Mutation acquired: ${pendingMutation.name}`);
     setPendingMutation(null);
   };
 
   const rejectMutation = () => {
-    setLastEvent('Mutation rejected.');
+    logEvent('Mutation rejected.');
     setPendingMutation(null);
   };
 
@@ -121,13 +125,13 @@ export const useGameState = (soup: SoupType) => {
       if (Math.random() < 0.12 && availableMutations.length) {
         const mutation = randomItem(availableMutations);
         updated = applyMutation(updated, mutation);
-        setLastEvent(`Spontaneous mutation: ${mutation.name}`);
+        logEvent(`Spontaneous mutation: ${mutation.name}`);
       }
     
       if (Math.random() < 0.1) {
         const event = randomItem(temperatureEvents);
         updated = applyEvent(updated, event);
-        setLastEvent(event.description);
+        logEvent(event.description);
       }
     
       return isGameOver(updated) ? { ...updated, isGameOver: true } : updated;
