@@ -1,54 +1,45 @@
-# React + TypeScript + Vite
+# 🦠 Soupvivors
+A microbial survival strategy game... inside a bowl of soup.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🌡️ You are a bacterial lifeform that spontaneously emerged in a hot soup.
+Your goal: evolve into sentient intelligence before the host throws you away.
 
-Currently, two official plugins are available:
+## 🧫 Each day is a chance to grow, mutate — or perish.
+Pick your soup — 🥣 Borscht, 🍜 Miso, or 🌶 Tom Kha — and survive with whatever ingredients it gives you.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🧬 Features:
 
-## Expanding the ESLint configuration
+Evolve from microbe to sentient species 🧠
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Limited mutations (max 5) — choose wisely
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Random events: freezing, fermentation, oxygen loss
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Unpredictable end: the soup could be discarded at any moment
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🎮 Actions:
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+[1] Expand Biomass — increases XP, consumes resources
+
+[2] Stimulate Mutation — trigger a mutation (accept or reject)
+
+Next Day — pass time, with chances for spontaneous effects
+
+## 🥘 Soup types:
+
+🟥 Borscht: stable, rich, slow-paced
+
+⬜ Miso: light, fast, oxygen-rich, unstable
+
+🥥 Tom Kha: spicy, chaotic, mutation-friendly
+
+## 🧵 Every run is a new micro-story.
+Will your civilization achieve consciousness before the soup is poured down the drain?
+
+## Author
+Created with microbial love 🧫 by Mariia Parfeniuk, developer and digital soup enthusiast.
+Project started as a side experiment in creativity, strategy, and bacterial absurdism.
+All ASCII bacteria are handcrafted. No AI was harmed during fermentation.
+
+Follow development at: (https://github.com/mariaparfenyuk)
+Institute of Soupvivalism © 2025

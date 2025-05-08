@@ -1,4 +1,23 @@
-{
+{"author": {
+  "name": "Mariia Parfeniuk",
+  "email": "mariiaparfeniuk@proton.me",
+  "url": "https://mariaparfenyuk.github.io/"
+},
+"keywords": [
+  "game",
+  "react",
+  "typescript",
+  "ascii",
+  "soup",
+  "evolution",
+  "bacteria",
+  "mutation",
+  "minimalist",
+  "terminal-style",
+  "fun",
+  "side-project"
+],
+"license": "MIT",
   "name": "soupvivors",
   "private": true,
   "version": "0.0.0",
