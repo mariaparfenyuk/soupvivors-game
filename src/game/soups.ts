@@ -2,7 +2,7 @@ export type SoupType = {
   id: string;
   name: string;
   description: string;
-  asciiIcon: string;
+  asciiIcon: string[]; // 3 строки по 3 emoji
   initialResources: {
     proteins: number;
     carbs: number;
@@ -15,14 +15,12 @@ export const soups: SoupType[] = [
   {
     id: 'borscht',
     name: 'Borscht',
-    description: 'Earthy and stable. Slow but rich.',
-    asciiIcon: `
-    ╭────╮
-   ╭╯B♨️╰╮
-   │======│
-   │======│
-   ╰──────╯
-    `,
+    description: 'Earthy and stable. Root-rich soup of survival.',
+    asciiIcon: [
+      '🟥🥬🟥',
+      '🥔🧄🥕',
+      '🟥🥕🟥',
+    ],
     initialResources: {
       proteins: 30,
       carbs: 50,
@@ -33,12 +31,12 @@ export const soups: SoupType[] = [
   {
     id: 'miso',
     name: 'Miso Soup',
-    description: 'Light, fast, unstable.',
-    asciiIcon: `
-     ☁️
-   (湯)
-     ☁️
-    `,
+    description: 'Light, fast, and fleeting. A whisper of umami.',
+    asciiIcon: [
+      '⬜🟫⬜',
+      '🟧⬜🟧',
+      '⬜🟫⬜',
+    ],
     initialResources: {
       proteins: 15,
       carbs: 30,
@@ -49,12 +47,12 @@ export const soups: SoupType[] = [
   {
     id: 'tom_kha',
     name: 'Tom Kha',
-    description: 'Spicy, volatile, mutation-friendly.',
-    asciiIcon: `
-     🔥
-  (🌶 🥥)
-     🔥
-    `,
+    description: 'Spicy coconut chaos. Perfect for mutations.',
+    asciiIcon: [
+      '🥥🌶🥬',
+      '🟠🌶🟠',
+      '🥥🥬🌶',
+    ],
     initialResources: {
       proteins: 20,
       carbs: 25,
