@@ -11,8 +11,6 @@ import {
   applyMutation,
 } from '../game/logic';
 import { randomItem } from '../game/utils';
-import { LEVEL_REQUIREMENTS } from '../game/state';
-
 
 export const useGameState = (soup: SoupType) => {
   const [state, setState] = useState<GameState | null>(null);
@@ -39,43 +37,34 @@ export const useGameState = (soup: SoupType) => {
     }
   }, [soup]);
 
-  const updateCivilizationLevel = (game: GameState): GameState => {
-    const currentLevel = game.level;
-    for (let level = 5; level > currentLevel; level--) {
-      const req = LEVEL_REQUIREMENTS[level];
-      if (game.xp >= req.xp && game.stability >= req.stability) {
-        return { ...game, level };
-      }
-    }
-    return game;
-  };
-
   const expandBiomass = () => {
     if (!state || state.isGameOver) return;
 
     const shouldTriggerEvent = Math.random() < 0.3;
-    const event = shouldTriggerEvent
-      ? gameEvents[Math.floor(Math.random() * gameEvents.length)]
-      : null;
+    const event = shouldTriggerEvent ? randomItem(gameEvents) : undefined;
 
-      setState(prev => {
-        if (!prev) return prev;
-      
-        let updated = {
-          ...prev,
-          xp: prev.xp + 5 + (prev.xpBoost ? 1 : 0),
-          proteins: Math.max(prev.proteins - 5, 0),
-          carbs: Math.max(prev.carbs - 5, 0),
-          day: prev.day + 1,
-          oxygen: prev.oxygenBonus ? prev.oxygen + 5 : prev.oxygen,
-        };
-      
-        updated = applyStabilityChange(updated);
-        updated = applyEvent(updated, event);
-        updated = updateCivilizationLevel(updated);
-      
-        return isGameOver(updated) ? { ...updated, isGameOver: true } : updated;
-      });
+    setState(prev => {
+      if (!prev) return prev;
+
+      let updated = {
+        ...prev,
+        xp: prev.xp + 5 + (prev.xpBoost ? 1 : 0),
+        proteins: Math.max(prev.proteins - 5, 0),
+        carbs: Math.max(prev.carbs - 5, 0),
+        day: prev.day + 1,
+        oxygen: prev.oxygenBonus ? prev.oxygen + 5 : prev.oxygen,
+      };
+
+      updated = applyStabilityChange(updated);
+      updated = applyEvent(updated, event ?? null);
+      updated = updateCivilizationLevel(updated);
+
+      if (event?.description) {
+        logEvent(event.description);
+      }
+
+      return isGameOver(updated) ? { ...updated, isGameOver: true } : updated;
+    });
   };
 
   const stimulateMutation = () => {
@@ -84,13 +73,13 @@ export const useGameState = (soup: SoupType) => {
     const remaining = mutationPool.filter(
       (m) => !state.mutations.includes(m.name)
     );
-    const random = remaining[Math.floor(Math.random() * remaining.length)];
+    const random = randomItem(remaining);
     setPendingMutation(random);
   };
 
   const acceptMutation = () => {
     if (!pendingMutation || !state) return;
-  
+
     setState(prev => {
       if (!prev) return prev;
       const updated = pendingMutation.apply(prev);
@@ -99,7 +88,7 @@ export const useGameState = (soup: SoupType) => {
         mutations: [...prev.mutations, pendingMutation.name],
       };
     });
-  
+
     logEvent(`Mutation acquired: ${pendingMutation.name}`);
     setPendingMutation(null);
   };
@@ -114,26 +103,27 @@ export const useGameState = (soup: SoupType) => {
 
     setState(prev => {
       if (!prev) return prev;
-    
+
       let updated = { ...prev, day: prev.day + 1 };
-    
+
       if (prev.oxygenBonus) {
         updated.oxygen += 5;
       }
-    
+
       const availableMutations = mutationPool.filter(m => !prev.mutations.includes(m.name));
       if (Math.random() < 0.12 && availableMutations.length) {
         const mutation = randomItem(availableMutations);
         updated = applyMutation(updated, mutation);
         logEvent(`Spontaneous mutation: ${mutation.name}`);
       }
-    
+
       if (Math.random() < 0.1) {
         const event = randomItem(temperatureEvents);
         updated = applyEvent(updated, event);
         logEvent(event.description);
       }
-    
+
+      updated = updateCivilizationLevel(updated);
       return isGameOver(updated) ? { ...updated, isGameOver: true } : updated;
     });
   };
