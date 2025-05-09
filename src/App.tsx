@@ -16,7 +16,9 @@ function App() {
     return <SoupSelect soups={soups} onSelect={setSelectedSoup} />;
   }
 
-  if (!game) return null;
+  if (!game || !game.state) {
+    return <div>Loading game...</div>;
+  }
 
   const {
     state,
@@ -36,6 +38,7 @@ function App() {
         day={state.day}
         maxDays={state.maxDays}
         soup={state.soup}
+        stability={state.stability}
       />
     );
   }

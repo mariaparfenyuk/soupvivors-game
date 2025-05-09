@@ -9,6 +9,18 @@ type Props = {
 };
 
 export const GameScreen = ({ state, lastEvent, onExpandBiomass, onNextDay, onStimulateMutation, }: Props) => {
+  console.log('Rendering GameScreen with state:', state);
+  console.log('Last event:', lastEvent);
+
+  if (!state || !state.soup || state.stability === undefined) {
+    console.error('Invalid game state:', state);
+    return <div>Game state is invalid. Please restart the game.</div>;
+  }
+
+  const soupName = state.soup || 'Unknown Soup';
+  const day = state.day || 0;
+  const stability = state.stability || 0;
+  const levelName = LEVEL_NAMES[state.level] || 'Unknown Level';
   const formattedEvent = lastEvent ? `\nRecent Event:\n> ${lastEvent}\n` : '';
 
   return (
@@ -22,12 +34,12 @@ export const GameScreen = ({ state, lastEvent, onExpandBiomass, onNextDay, onSti
 
 ┌───────────────────────────────┐
 │       SOUPVIVORS REPORT       │
-│   Specimen: ${state.soup.padEnd(18)}│
-│   Day: ${state.day.toString().padEnd(23)}│
+│   Specimen: ${soupName.padEnd(18)}│
+│   Day: ${day.toString().padEnd(23)}│
 └───────────────────────────────┘
 
-Civilization Level: ${LEVEL_NAMES[state.level]}
-Stability: ${state.stability}%
+Civilization Level: ${levelName}
+Stability: ${stability}%
 Evolution XP: ${state.xp}
 
 Resources:

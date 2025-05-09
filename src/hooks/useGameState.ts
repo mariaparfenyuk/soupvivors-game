@@ -12,7 +12,7 @@ import {
 } from '../game/logic';
 import { randomItem } from '../game/utils';
 
-export const useGameState = (soup: SoupType) => {
+export const useGameState = (soup: SoupType | null) => {
   const [state, setState] = useState<GameState | null>(null);
   const [lastEvent, setLastEvent] = useState<string | null>(null);
   const [pendingMutation, setPendingMutation] = useState<Mutation | null>(null);
@@ -22,19 +22,25 @@ export const useGameState = (soup: SoupType) => {
   };
 
   useEffect(() => {
-    if (soup) {
-      setState({
-        level: 1,
-        day: 1,
-        xp: 0,
-        soup: soup.name,
-        stability: 50,
-        mutations: [],
-        maxDays: Math.floor(20 + Math.random() * 10),
-        isGameOver: false,
-        ...soup.initialResources,
-      });
+    if (!soup) {
+      setState(null);
+      return;
     }
+
+    setState({
+      level: 1,
+      day: 1,
+      xp: 0,
+      soup: soup.name,
+      stability: 50,
+      mutations: [],
+      maxDays: Math.floor(20 + Math.random() * 10),
+      isGameOver: false,
+      proteins: soup.initialResources?.proteins || 0,
+      carbs: soup.initialResources?.carbs || 0,
+      spices: soup.initialResources?.spices || 0,
+      oxygen: soup.initialResources?.oxygen || 0,
+    });
   }, [soup]);
 
   const expandBiomass = () => {
