@@ -1,17 +1,25 @@
-body {
-  margin: 0;
-  background-color: #0a0a0a;
-  color: #aaffaa; 
-  font-family: 'IBM Plex Mono', monospace;
+button {
+  font-family: monospace;
+  background: #222;
+  color: #aaffaa;
+  border: 1px solid #444;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  max-width: 300px;
 }
 
-button {
-  margin-top: 1rem;
-  font-family: inherit;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  background: #222;
-  color: #fff;
-  border: 1px solid #555;
-  cursor: pointer;
+button:hover {
+  background: #333;
+  border-color: #66ff66;
+}
+
+@media (hover: none) {
+  button:hover {
+    background: #222; 
+    border-color: #444;
+  }
 }

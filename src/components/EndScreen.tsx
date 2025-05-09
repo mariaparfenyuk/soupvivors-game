@@ -1,55 +1,47 @@
 import { LEVEL_NAMES } from '../game/state';
+import { defeatMessages, victoryMessages } from '../game/finalMessages';
 
 type Props = {
   level: number;
   day: number;
   maxDays: number;
+  soup: string;
+  stability: number;
 };
 
-export const EndScreen = ({ level, day, maxDays }: Props) => {
-  const getEndingPhrase = (): string => {
-    if (level === 5) {
-      return "Congratulations! Intelligence has emerged from broth!";
-    }
+export const EndScreen = ({ level, day, maxDays, soup, stability }: Props) => {
+  const isVictory = level === 5;
 
-    const phrasesByLevel: Record<number, string[]> = {
-      1: [
-        "You were still a droplet of potential.",
-        "The spoon took you before you could divide.",
-        "So much soup, so little time.",
-      ],
-      2: [
-        "Your colony had dreams... but no membrane.",
-        "Another spoon, another failure.",
-        "Not bad. For a microbe.",
-      ],
-      3: [
-        "Your community almost found its voice.",
-        "Just one spice short of genius.",
-        "Broth betrayed you at the brink.",
-      ],
-      4: [
-        "Culture collapsed. Great soup civilizations fall too.",
-        "So close. But the refrigerator claimed all.",
-        "Your thoughts fermented... but not enough.",
-      ],
-    };
+  const message = isVictory
+    ? randomItem(victoryMessages)
+    : randomItem(defeatMessages[level] || ["The soup had other plans."]);
 
-    const options = phrasesByLevel[level] || ["You existed. And then... you didn't."];
-    return options[Math.floor(Math.random() * options.length)];
-  };
+  const heading = isVictory
+    ? `
+╭────────────────────────────────╮
+│     🎉 CONGRATULATIONS 🎉     │
+╰────────────────────────────────╯
+`
+    : `
+╭────────────────────────────╮
+│         GAME OVER          │
+╰────────────────────────────╯
+`;
 
   return (
     <pre style={{ fontFamily: 'monospace', padding: '1rem', whiteSpace: 'pre-wrap' }}>
+{heading}
 {`
-╭─ END OF EXPERIMENT ───────────────────────────────╮
-│                                                   │
-│  ${getEndingPhrase()}                            │
-│                                                   │
-│  Final Level: ${level} (${LEVEL_NAMES[level]})              │
-│  Total Days:  ${day} / ${maxDays}                            │
-╰──────────────────────────────────────────────────╯
+🥣 Soup:         ${soup}
+📈 Level:        ${LEVEL_NAMES[level]}
+📆 Day:          ${day} of ${maxDays}
+🧪 Stability:    ${stability}%
+
+${message}
 `}
-    </pre>
-  );
+</pre>)
 };
+
+function randomItem<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}

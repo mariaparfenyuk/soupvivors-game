@@ -35,6 +35,7 @@ function App() {
         level={state.level}
         day={state.day}
         maxDays={state.maxDays}
+        soup={state.soup}
       />
     );
   }
